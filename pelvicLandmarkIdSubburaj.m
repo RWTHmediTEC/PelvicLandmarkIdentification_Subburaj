@@ -1,4 +1,4 @@
-function Landmarks = PelvicLandmarkIdSubburaj(pelvis, varargin)
+function Landmarks = pelvicLandmarkIdSubburaj(pelvis, varargin)
 %CURVATUREANALYSIS detects boney landmarks of the pelvis
 %
 % REQUIRED INPUT:
@@ -76,9 +76,12 @@ addpath(genpath([fileparts([mfilename('fullpath'), '.m']) '\' 'rsc']))
 p = inputParser;
 logParValidFunc=@(x) (islogical(x) || isequal(x,1) || isequal(x,0));
 addParameter(p,'visualization', false, logParValidFunc);
+addParameter(p,'curvatureThreshold', 40, ...
+    @(x) validateattributes(x, {'numeric'},{'scalar','>', 0,'<', 50}));
 parse(p,varargin{:});
 
 visu = p.Results.visualization;
+curvThreshold = p.Results.curvatureThreshold;
 
 %% Curvature Analysis
 
@@ -89,8 +92,8 @@ curvatureOptions.verb = 0;
     compute_curvature(pelvis.vertices,pelvis.faces,curvatureOptions);
 
 % Group vertices according to mean curvature
-C_l = cMean<=prctile(cMean,40);
-C_h = cMean>=prctile(cMean,60);
+C_l = cMean<=prctile(cMean,  0 + curvThreshold);
+C_h = cMean>=prctile(cMean,100 - curvThreshold);
 
 % Second level grouping according to Gaussian curvature
 % 1,4 negative Gaussian, 2,5 Gaussian=0, 3,6 positive Gaussian
