@@ -78,7 +78,8 @@ defaultMode = {'small'};
 p = inputParser;
 logParValidFunc=@(x) (islogical(x) || isequal(x,1) || isequal(x,0));
 addParameter(p,'visualization', false, logParValidFunc);
-addParameter(p,'mode', defaultMode, @(x) any(validatestring(x,expectedMode)));
+addParameter(p,'mode', defaultMode, @(x) any(validatestring(x,expectedMode)));  % Choose spatial adjacency matrix
+addParameter(p,'symmetry', false, logParValidFunc);                             % Choose if identical landmarks have to be on opposite sides
 addParameter(p,'curvatureThreshold', 40, ...
     @(x) validateattributes(x, {'numeric'},{'scalar','>', 0,'<', 50}));
 parse(p,varargin{:});
@@ -86,6 +87,7 @@ parse(p,varargin{:});
 visu = p.Results.visualization;
 curvThreshold = p.Results.curvatureThreshold;
 mode = p.Results.mode;
+sym = p.Results.symmetry;
 
 %% Curvature Analysis
 
@@ -663,58 +665,63 @@ end
 
 % NEW: Group candidates in positive- and negative side first.
 % If two landmarks are detected, choose the one with the highest area
-for i=1:length(Landmarks)
-    if length(Landmarks(i).area) > 1
-        
-        pos = Landmarks(i).area(sign(Landmarks(i).centroids(:,1))==1);
-        if ~isempty(pos)
-            idxPos = find(Landmarks(i).area==max(pos));
-            posArea =  Landmarks(i).area(idxPos);
-            posId = Landmarks(i).id(idxPos);
-            posCentroids = Landmarks(i).centroids(idxPos,:);
-            posSubMesh = Landmarks(i).subMesh(idxPos);
-        else
-            posArea =  [];
-            posId = [];
-            posCentroids = [];
-            posSubMesh = [];
+
+if sym
+    for i=1:length(Landmarks)
+        if length(Landmarks(i).area) > 1
+            
+            pos = Landmarks(i).area(sign(Landmarks(i).centroids(:,1))==1);
+            if ~isempty(pos)
+                idxPos = find(Landmarks(i).area==max(pos));
+                posArea =  Landmarks(i).area(idxPos);
+                posId = Landmarks(i).id(idxPos);
+                posCentroids = Landmarks(i).centroids(idxPos,:);
+                posSubMesh = Landmarks(i).subMesh(idxPos);
+            else
+                posArea =  [];
+                posId = [];
+                posCentroids = [];
+                posSubMesh = [];
+            end
+            
+            neg = Landmarks(i).area(sign(Landmarks(i).centroids(:,1))==-1);
+            if ~isempty(neg)
+                idxNeg = find(Landmarks(i).area==max(neg));
+                negArea =  Landmarks(i).area(idxNeg);
+                negId = Landmarks(i).id(idxNeg);
+                negCentroids = Landmarks(i).centroids(idxNeg,:);
+                negSubMesh = Landmarks(i).subMesh(idxNeg);
+            else
+                negArea =  [];
+                negId = [];
+                negCentroids = [];
+                negSubMesh = [];
+            end
+            
+            Landmarks(i).area = [posArea negArea];
+            Landmarks(i).id = [posId negId];
+            Landmarks(i).centroids = [posCentroids negCentroids];
+            Landmarks(i).subMesh = [posSubMesh negSubMesh];
+            
         end
-        
-        neg = Landmarks(i).area(sign(Landmarks(i).centroids(:,1))==-1);
-        if ~isempty(neg)
-            idxNeg = find(Landmarks(i).area==max(neg));
-            negArea =  Landmarks(i).area(idxNeg);
-            negId = Landmarks(i).id(idxNeg);
-            negCentroids = Landmarks(i).centroids(idxNeg,:);
-            negSubMesh = Landmarks(i).subMesh(idxNeg);
-        else
-            negArea =  [];
-            negId = [];
-            negCentroids = [];
-            negSubMesh = [];
+    end
+    
+else
+    
+    for i=1:length(Landmarks)
+        if length(Landmarks(i).area) > 2
+            j=length(Landmarks(i).area);
+            while j > 2
+                idx = find(Landmarks(i).area==min(Landmarks(i).area));
+                Landmarks(i).area(idx) = [];
+                Landmarks(i).id(idx) = [];
+                Landmarks(i).centroids(idx,:) = [];
+                Landmarks(i).subMesh(idx) = [];
+                j=j-1;
+            end
         end
-        
-        Landmarks(i).area = [posArea negArea];
-        Landmarks(i).id = [posId negId];
-        Landmarks(i).centroids = [posCentroids negCentroids];
-        Landmarks(i).subMesh = [posSubMesh negSubMesh];
-        
     end
 end
-
-% for i=1:length(Landmarks)
-%     if length(Landmarks(i).area) > 2
-%         j=length(Landmarks(i).area);
-%         while j > 2
-%             idx = find(Landmarks(i).area==min(Landmarks(i).area));
-%             Landmarks(i).area(idx) = [];
-%             Landmarks(i).id(idx) = [];
-%             Landmarks(i).centroids(idx,:) = [];
-%             Landmarks(i).subMesh(idx) = [];
-%             j=j-1;
-%         end
-%     end
-% end
 
 %visualization
 if visu == true

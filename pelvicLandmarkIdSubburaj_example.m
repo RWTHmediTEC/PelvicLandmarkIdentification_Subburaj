@@ -9,6 +9,6 @@ NoS=length(subjects);
 for s=1%:NoS
     
 load(fullfile(subjects(s).folder, subjects(s).name), 'pelvis')
-Landmarks = pelvicLandmarkIdSubburaj(pelvis, 'visu',1, 'curv', 40, 'mode', 'small');
+Landmarks = pelvicLandmarkIdSubburaj(pelvis, 'visu',1, 'curv', 40, 'mode', 'small', 'sym', 1);
 
 end
