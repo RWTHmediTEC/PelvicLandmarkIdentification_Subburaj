@@ -73,15 +73,19 @@ addpath(genpath([fileparts([mfilename('fullpath'), '.m']) '\' 'src']))
 addpath(genpath([fileparts([mfilename('fullpath'), '.m']) '\' 'rsc']))
 
 % settings
+expectedMode = {'subburaj','small','full'};
+defaultMode = {'small'};
 p = inputParser;
 logParValidFunc=@(x) (islogical(x) || isequal(x,1) || isequal(x,0));
 addParameter(p,'visualization', false, logParValidFunc);
+addParameter(p,'mode', defaultMode, @(x) any(validatestring(x,expectedMode)));
 addParameter(p,'curvatureThreshold', 40, ...
     @(x) validateattributes(x, {'numeric'},{'scalar','>', 0,'<', 50}));
 parse(p,varargin{:});
 
 visu = p.Results.visualization;
 curvThreshold = p.Results.curvatureThreshold;
+mode = p.Results.mode;
 
 %% Curvature Analysis
 
@@ -134,12 +138,20 @@ if visu
     axis on; axis equal; hold on
     xlabel x; ylabel y; zlabel z;
     
-    % Color Code Mesh according to curvature
-    cSorted = sort(cMean);
-    idxs = arrayfun(@(x)find(cSorted==x,1),cMean);
-    cmap = jet(length(cMean));
-    cmapS = cmap(idxs,:);
-    patch(pelvis,'FaceColor', 'interp', 'FaceVertexCData', cmapS, 'EdgeColor', 'none');
+%     % Color Code Mesh according to curvature
+%     cSorted = sort(cMean);
+%     idxs = arrayfun(@(x)find(cSorted==x,1),cMean);
+%     cmap = jet(length(cMean));
+%     cmapS = cmap(idxs,:);
+%     patch(pelvis,'FaceColor', 'interp', 'FaceVertexCData', cmapS, 'EdgeColor', 'none');
+    
+    % Alternative visualization
+    patchProps.EdgeColor = 'none';
+    patchProps.FaceColor = [0.75 0.75 0.75];
+    patchProps.FaceAlpha = 0.75;
+    patchProps.EdgeLighting = 'gouraud';
+    patchProps.FaceLighting = 'gouraud';
+    patch(pelvis, patchProps)
 end
 
 %% Create surface regions from seed list
@@ -459,7 +471,7 @@ clear a b c;
 
 % Find landmarks in surface regions
 % Load spatial adjacency matrix R_A
-load('adjM_area.mat','R_A');
+load(strcat(mode,'.mat'),'R_A');
 
 % Initial search for reference point PS
 % All candidates (surface region) fulfilling spatial relationship found in
@@ -621,10 +633,12 @@ clear d d_h i;
 for i=1:length(CL)
     lmArea = str2double(R_A{i+4,3});
     lmType = R_A{i+4,2};
+    lmName = R_A{i+4,1};
     Landmarks(i).subMesh =[];
     Landmarks(i).centroids =[];
     Landmarks(i).area =[];
     Landmarks(i).id =[];
+    Landmarks(i).name = lmName;
     
     for j=1:length(CL(i).indices)
         lmFaces=sum(ismember(pelvis.faces,P(CL(i).indices(j)-1).faces),2) == 3;
@@ -632,7 +646,7 @@ for i=1:length(CL)
         area = meshSurfaceArea(subMesh.vertices,subMesh.faces);
         type = P(CL(i).indices(j)-1).type;
         
-        % Check candidate type and area are matching landmark
+        % Check if candidate type and area are matching landmark
         if strcmp(type,lmType)
             %         if area >= lmArea*0.7 & area <= lmArea*1.3 & strcmp(type,lmType)
             Landmarks(i).subMesh = [Landmarks(i).subMesh subMesh];
@@ -646,19 +660,61 @@ end
 
 % If more than 2 candidates are detected for one landmark, keep only those
 % with the highest area and delete the rest.
+
+% NEW: Group candidates in positive- and negative side first.
+% If two landmarks are detected, choose the one with the highest area
 for i=1:length(Landmarks)
-    if length(Landmarks(i).area)
-        j=length(Landmarks(i).area);
-        while j > 2
-            idx = find(Landmarks(i).area==min(Landmarks(i).area));
-            Landmarks(i).area(idx) = [];
-            Landmarks(i).id(idx) = [];
-            Landmarks(i).centroids(idx,:) = [];
-            Landmarks(i).subMesh(idx) = [];
-            j=j-1;
+    if length(Landmarks(i).area) > 1
+        
+        pos = Landmarks(i).area(sign(Landmarks(i).centroids(:,1))==1);
+        if ~isempty(pos)
+            idxPos = find(Landmarks(i).area==max(pos));
+            posArea =  Landmarks(i).area(idxPos);
+            posId = Landmarks(i).id(idxPos);
+            posCentroids = Landmarks(i).centroids(idxPos,:);
+            posSubMesh = Landmarks(i).subMesh(idxPos);
+        else
+            posArea =  [];
+            posId = [];
+            posCentroids = [];
+            posSubMesh = [];
         end
+        
+        neg = Landmarks(i).area(sign(Landmarks(i).centroids(:,1))==-1);
+        if ~isempty(neg)
+            idxNeg = find(Landmarks(i).area==max(neg));
+            negArea =  Landmarks(i).area(idxNeg);
+            negId = Landmarks(i).id(idxNeg);
+            negCentroids = Landmarks(i).centroids(idxNeg,:);
+            negSubMesh = Landmarks(i).subMesh(idxNeg);
+        else
+            negArea =  [];
+            negId = [];
+            negCentroids = [];
+            negSubMesh = [];
+        end
+        
+        Landmarks(i).area = [posArea negArea];
+        Landmarks(i).id = [posId negId];
+        Landmarks(i).centroids = [posCentroids negCentroids];
+        Landmarks(i).subMesh = [posSubMesh negSubMesh];
+        
     end
 end
+
+% for i=1:length(Landmarks)
+%     if length(Landmarks(i).area) > 2
+%         j=length(Landmarks(i).area);
+%         while j > 2
+%             idx = find(Landmarks(i).area==min(Landmarks(i).area));
+%             Landmarks(i).area(idx) = [];
+%             Landmarks(i).id(idx) = [];
+%             Landmarks(i).centroids(idx,:) = [];
+%             Landmarks(i).subMesh(idx) = [];
+%             j=j-1;
+%         end
+%     end
+% end
 
 %visualization
 if visu == true
