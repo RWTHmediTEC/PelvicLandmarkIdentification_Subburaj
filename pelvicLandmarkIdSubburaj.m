@@ -668,46 +668,46 @@ end
 
 if sym
     for i=1:length(Landmarks)
-        if length(Landmarks(i).area) > 1
-            
+        if isempty(Landmarks(i).centroids)
+            pos =[]; neg=[];
+        else
             pos = Landmarks(i).area(sign(Landmarks(i).centroids(:,1))==1);
-            if ~isempty(pos)
-                idxPos = find(Landmarks(i).area==max(pos));
-                posArea =  Landmarks(i).area(idxPos);
-                posId = Landmarks(i).id(idxPos);
-                posCentroids = Landmarks(i).centroids(idxPos,:);
-                posSubMesh = Landmarks(i).subMesh(idxPos);
-            else
-                posArea =  [];
-                posId = [];
-                posCentroids = [];
-                posSubMesh = [];
-            end
-            
             neg = Landmarks(i).area(sign(Landmarks(i).centroids(:,1))==-1);
-            if ~isempty(neg)
-                idxNeg = find(Landmarks(i).area==max(neg));
-                negArea =  Landmarks(i).area(idxNeg);
-                negId = Landmarks(i).id(idxNeg);
-                negCentroids = Landmarks(i).centroids(idxNeg,:);
-                negSubMesh = Landmarks(i).subMesh(idxNeg);
-            else
-                negArea =  [];
-                negId = [];
-                negCentroids = [];
-                negSubMesh = [];
-            end
-            
-            Landmarks(i).area = [posArea negArea];
-            Landmarks(i).id = [posId negId];
-            Landmarks(i).centroids = [posCentroids negCentroids];
-            Landmarks(i).subMesh = [posSubMesh negSubMesh];
-            
         end
+        if ~isempty(pos)
+            idxPos = find(Landmarks(i).area==max(pos));
+            posArea =  Landmarks(i).area(idxPos);
+            posId = Landmarks(i).id(idxPos);
+            posCentroids = Landmarks(i).centroids(idxPos,:);
+            posSubMesh = Landmarks(i).subMesh(idxPos);
+        else
+            posArea =  nan;
+            posId = nan;
+            posCentroids = nan(1,3);
+            posSubMesh.vertices = [];
+            posSubMesh.faces = [];
+        end
+        
+        if ~isempty(neg)
+            idxNeg = find(Landmarks(i).area==max(neg));
+            negArea =  Landmarks(i).area(idxNeg);
+            negId = Landmarks(i).id(idxNeg);
+            negCentroids = Landmarks(i).centroids(idxNeg,:);
+            negSubMesh = Landmarks(i).subMesh(idxNeg);
+        else
+            negArea =  nan;
+            negId = nan;
+            negCentroids = nan(1,3);
+            negSubMesh.vertices = [];
+            negSubMesh.faces = [];
+        end
+        
+        Landmarks(i).area = [posArea; negArea];
+        Landmarks(i).id = [posId; negId];
+        Landmarks(i).centroids = [posCentroids; negCentroids];
+        Landmarks(i).subMesh = [posSubMesh; negSubMesh];
     end
-    
 else
-    
     for i=1:length(Landmarks)
         if length(Landmarks(i).area) > 2
             j=length(Landmarks(i).area);
@@ -740,6 +740,7 @@ if visu == true
     for i=1:length(Landmarks)
         patchProps.FaceColor = rand(1,3);
         for j=1:length(Landmarks(i).subMesh)
+            if ~isempty(Landmarks(i).subMesh(j).vertices)
             % patch(Landmarks(i).subMesh(j), patchProps);
             drawPoint3d(mean(Landmarks(i).subMesh(j).vertices), pointProps);
             text(mean(Landmarks(i).subMesh(j).vertices(:,1)), ...
@@ -748,6 +749,7 @@ if visu == true
                 R_A(i+4,1),...
                 'FontWeight','bold','FontSize',16,...
                 'HorizontalAlignment', 'left', 'VerticalAlignment', 'bottom');
+            end
         end
     end
     mouseControl3d
