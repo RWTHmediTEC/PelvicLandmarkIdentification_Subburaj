@@ -73,7 +73,7 @@ addpath(genpath([fileparts([mfilename('fullpath'), '.m']) '\' 'src']))
 addpath(genpath([fileparts([mfilename('fullpath'), '.m']) '\' 'rsc']))
 
 % settings
-expectedMode = {'subburaj','small','full'};
+expectedMode = {'subburaj','small','full', 'rm'};
 defaultMode = {'small'};
 p = inputParser;
 logParValidFunc=@(x) (islogical(x) || isequal(x,1) || isequal(x,0));
