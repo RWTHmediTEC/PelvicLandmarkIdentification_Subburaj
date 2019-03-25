@@ -78,16 +78,30 @@ defaultMode = {'small'};
 p = inputParser;
 logParValidFunc=@(x) (islogical(x) || isequal(x,1) || isequal(x,0));
 addParameter(p,'visualization', false, logParValidFunc);
-addParameter(p,'mode', defaultMode, @(x) any(validatestring(x,expectedMode)));  % Choose spatial adjacency matrix
-addParameter(p,'symmetry', false, logParValidFunc);                             % Choose if identical landmarks have to be on opposite sides
-addParameter(p,'curvatureThreshold', 40, ...
-    @(x) validateattributes(x, {'numeric'},{'scalar','>', 0,'<', 50}));
+% Choose spatial adjacency matrix
+addParameter(p,'mode', defaultMode, @(x) any(validatestring(lower(x),expectedMode)));
+% Choose if identical landmarks have to be on opposite sides
+addParameter(p,'symmetry', false, logParValidFunc); 
+addParameter(p,'curvatureThreshold', 40, @(x) validateattributes(x, {'numeric'},{'scalar','>', 0,'<', 50}));
+addParameter(p,'initalTransform', nan, @isTransform3d)
+addParameter(p,'meanTransform', false, logParValidFunc)
 parse(p,varargin{:});
 
 visu = p.Results.visualization;
 curvThreshold = p.Results.curvatureThreshold;
 mode = p.Results.mode;
 sym = p.Results.symmetry;
+iTFM = p.Results.initalTransform;
+meanTFM = p.Results.meanTransform;
+
+%% Pre processing
+if ~any(isnan(iTFM))
+    pelvis = transformPoint3d(pelvis, iTFM);
+end
+
+if meanTFM
+    pelvis = transformPoint3d(pelvis, createTranslation3d(-mean(pelvis.vertices)));
+end
 
 %% Curvature Analysis
 
