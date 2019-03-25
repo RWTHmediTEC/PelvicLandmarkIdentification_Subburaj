@@ -8,7 +8,7 @@ NoS=length(subjects);
 
 autoLM=cell(14,NoS);
 autoLM=cellfun(@(x) nan(1,3), autoLM,'uni',0);
-for s=1%:NoS
+for s=1:NoS
     
     load(fullfile(subjects(s).folder, subjects(s).name), 'pelvis', 'APCS_TFM')
     Landmarks = pelvicLandmarkIdSubburaj(pelvis, 'initalT', APCS_TFM, 'visu',1, 'mode', mode, 'sym', 1);
