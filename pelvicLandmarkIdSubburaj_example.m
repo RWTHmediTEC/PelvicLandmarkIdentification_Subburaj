@@ -1,9 +1,11 @@
 clearvars; close all; opengl hardware
 
+load('data/CTCS_TFM.mat')
+
 % Mode
 mode='rm';
 
-subjects=dir('data/*.mat');
+subjects=dir('data/z*.mat');
 NoS=length(subjects);
 
 autoLM=cell(14,NoS);
@@ -11,7 +13,7 @@ autoLM=cellfun(@(x) nan(1,3), autoLM,'uni',0);
 for s=1:NoS
     
     load(fullfile(subjects(s).folder, subjects(s).name), 'pelvis', 'APCS_TFM')
-    Landmarks = pelvicLandmarkIdSubburaj(pelvis, 'initalT', APCS_TFM, 'visu',1, 'mode', mode, 'sym', 1);
+    Landmarks = pelvicLandmarkIdSubburaj(pelvis, 'initalTransform', CTCS_TFM, 'visu',1, 'mode', mode, 'sym', 0);
     
     switch mode
         case 'full'
@@ -42,5 +44,5 @@ end
 
 detectionRate=sum(cellfun(@(x) ~all(isnan(x)), autoLM),2)/NoS*100;
 
-[List.f, List.p] = matlab.codetools.requiredFilesAndProducts([mfilename '.m']); 
-List.f = List.f'; List.p = List.p';
+% [List.f, List.p] = matlab.codetools.requiredFilesAndProducts([mfilename '.m']); 
+% List.f = List.f'; List.p = List.p';
