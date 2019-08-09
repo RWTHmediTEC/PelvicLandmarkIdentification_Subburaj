@@ -2,14 +2,12 @@ clearvars; close all; opengl hardware
 
 addpath('src/external/matGeom/matGeom/meshes3d')
 
-load('data/CTCS_TFM.mat')
-
-dbPath='data/';
+dbPath='../../Database/VSD/';
 
 % Mode
-mode='rm';
+mode='subburaj';
 
-subjects=dir([dbPath 'VSD_DB/z*.mat']);
+subjects=dir([dbPath 'Bones/z*.mat']);
 NoS=length(subjects);
 
 autoLM=cell(14,NoS);
