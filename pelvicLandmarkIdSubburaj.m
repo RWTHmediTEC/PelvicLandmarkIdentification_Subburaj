@@ -10,52 +10,25 @@ function Landmarks = pelvicLandmarkIdSubburaj(pelvis, varargin)
 % OPTIONAL INPUT:
 %   'visualization': true (default) or false
 %
-% OUTPUT: A struct with the following fields
-%   ASIS = Anterior Superior Iliac Spine: Contains the following fields:
-%   SubMesh, two meshes of the surface regions. Centroids, centroids of the
-%   surface regions. Area, area of the surface regions. ID, ids of the
-%   corresponding centroid vertices.
+% OUTPUT: A struct with the following fields:
+%   SubMesh: two meshes of the surface regions. 
+%   Centroids: centroids of the surface regions.
+%   Area: area of the surface regions.
+%   ID: ids of the corresponding centroid vertices.
+%   Name: The short name of the landmark.
+% The first row is the right side, the second row is the left side.
 %
-%   AIIS = Anterior Inferior Iliac Spine: Contains the following fields:
-%   SubMesh, two meshes of the surface regions. Centroids, centroids of the
-%   surface regions. Area, area of the surface regions. ID, ids of the
-%   corresponding centroid vertices.
-%
-%   PSIS = Posterior Superior Iliac Spine: Contains the following fields:
-%   SubMesh, two meshes of the surface regions. Centroids, centroids of the
-%   surface regions. Area, area of the surface regions. ID, ids of the
-%   corresponding centroid vertices.
-%
-%   PIIS = Posterior Inferior Iliac Spine: Contains the following fields:
-%   SubMesh, two meshes of the surface regions. Centroids, centroids of the
-%   surface regions. Area, area of the surface regions. ID, ids of the
-%   corresponding centroid vertices.
-%
-%   IS   = Ischial Spine: Contains the following fields:
-%   SubMesh, two meshes of the surface regions. Centroids, centroids of the
-%   surface regions. Area, area of the surface regions. ID, ids of the
-%   corresponding centroid vertices.
-%
-%   PT   = Pubic Tubercle: Contains the following fields:
-%   SubMesh, two meshes of the surface regions. Centroids, centroids of the
-%   surface regions. Area, area of the surface regions. ID, ids of the
-%   corresponding centroid vertices.
-%
-%   IPY  = Iliac Pubic Symphysis: Contains the following fields:
-%   SubMesh, two meshes of the surface regions. Centroids, centroids of the
-%   surface regions. Area, area of the surface regions. ID, ids of the
-%   corresponding centroid vertices.
-%
-%   IIT  = Iliac Ischial Tuberosity: Contains the following fields:
-%   SubMesh, two meshes of the surface regions. Centroids, centroids of the
-%   surface regions. Area, area of the surface regions. ID, ids of the
-%   corresponding centroid vertices.
-%
-%   IT   = Iliac Tubercle: Contains the following fields:
-%   SubMesh, two meshes of the surface regions. Centroids, centroids of the
-%   surface regions. Area, area of the surface regions. ID, ids of the
-%   corresponding centroid vertices.
-%
+% Depending on the spatial relationship matrix following landmarks can be
+% identified:
+%       ASIS = Anterior Superior Iliac Spine
+%       AIIS = Anterior Inferior Iliac Spine
+%       PSIS = Posterior Superior Iliac Spine
+%       PIIS = Posterior Inferior Iliac Spine
+%       IS   = Ischial Spine
+%       PT   = Pubic Tubercle
+%       IPY  = Iliac Pubic Symphysis
+%       IIT  = Iliac Ischial Tuberosity
+%       IT   = Iliac Tubercle
 %
 % REFERENCES:
 %   2008 - Subburaj et al. - 3D Shape Reasoning for Identifying Anatomical Landmarks
