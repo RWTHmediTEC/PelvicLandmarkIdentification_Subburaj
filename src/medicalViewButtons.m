@@ -1,9 +1,16 @@
 function medicalViewButtons(varargin)
+%MEDICALVIEWBUTTONS adds 6 buttons with medical directions to a figure
+%
+% AUTHOR: Maximilian C. M. Fischer
+% COPYRIGHT (C) 2016 - 2019 Maximilian C. M. Fischer
+% LICENSE: EUPL v1.2
+%
+
+mode = 'RAS';
 
 switch length(varargin)
     case 0
         hAx = gca;
-        mode = 'RAS';
     case 1
         if numel(varargin{1}) == 1 && ishandle(varargin{1})
             hAx = varargin{1};
@@ -48,17 +55,18 @@ switch mode
 end
 
 mouseControl3d(hAx,MC3D(:,:,3))
-uicontrol('Units','normalized','Position',[0.5-BSX*3/2 0.01+BSY BSX BSY],FontPropsA,...
+hFig=get(hAx, 'parent');
+uicontrol(hFig,'Units','normalized','Position',[0.5-BSX*3/2 0.01+BSY BSX BSY],FontPropsA,...
     'String','Left',     'Callback',@(s,e) mouseControl3d(gca, MC3D(:,:,1)));
-uicontrol('Units','normalized','Position',[0.5-BSX*3/2     0.01 BSX BSY],FontPropsA,...
+uicontrol(hFig,'Units','normalized','Position',[0.5-BSX*3/2     0.01 BSX BSY],FontPropsA,...
     'String','Right',    'Callback',@(s,e) mouseControl3d(gca, MC3D(:,:,2)));
-uicontrol('Units','normalized','Position',[0.5-BSX*1/2 0.01+BSY BSX BSY],FontPropsA,...
+uicontrol(hFig,'Units','normalized','Position',[0.5-BSX*1/2 0.01+BSY BSX BSY],FontPropsA,...
     'String','Anterior', 'Callback',@(s,e) mouseControl3d(gca, MC3D(:,:,3)));
-uicontrol('Units','normalized','Position',[0.5-BSX*1/2     0.01 BSX BSY],FontPropsA,...
+uicontrol(hFig,'Units','normalized','Position',[0.5-BSX*1/2     0.01 BSX BSY],FontPropsA,...
     'String','Posterior','Callback',@(s,e) mouseControl3d(gca, MC3D(:,:,4)));
-uicontrol('Units','normalized','Position',[0.5+BSX*1/2 0.01+BSY BSX BSY],FontPropsA,...
+uicontrol(hFig,'Units','normalized','Position',[0.5+BSX*1/2 0.01+BSY BSX BSY],FontPropsA,...
     'String','Superior', 'Callback',@(s,e) mouseControl3d(gca, MC3D(:,:,5)));
-uicontrol('Units','normalized','Position',[0.5+BSX*1/2     0.01 BSX BSY],FontPropsA,...
+uicontrol(hFig,'Units','normalized','Position',[0.5+BSX*1/2     0.01 BSX BSY],FontPropsA,...
     'String','Inferior', 'Callback',@(s,e) mouseControl3d(gca, MC3D(:,:,6)));
 
 end
