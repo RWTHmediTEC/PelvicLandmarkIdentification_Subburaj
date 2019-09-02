@@ -5,6 +5,12 @@ function indices = searchAdjM(mRow,rRow )
 % rRow contains relationship between candidate and all surface regions.
 % Indidices returns a list of all candidates fulfilling spatial
 % relationship
+%
+% AUTHOR: Felix Krooﬂ
+% COPYRIGHT (C) 2016 - 2019 Felix Krooﬂ
+% LICENSE: EUPL v1.2
+%
+
 indices=struct('indices',{});
 
 for j=1:length(mRow)

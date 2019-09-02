@@ -1,12 +1,12 @@
-function Landmarks = pelvicLandmarkIdSubburaj(pelvis, varargin)
-%CURVATUREANALYSIS detects boney landmarks of the pelvis
+function Landmarks = pelvicLandmarkID_Subburaj(pelvis, varargin)
+%PELVICLANDMARKID_SUBBURAJ detects boney landmarks of the pelvis
 %
 % REQUIRED INPUT:
-%   pelvis: A mesh of the pelvis (hip bones and sacrum) consisting of one
-%       component with the fields: pelvis.vertices, pelvis.faces
-%       ATTENTION: The mesh has to be transformed into the automatic pelvic
-%       coordiante system [Kai 2014]. Use the function: automaticPelvicCS.m
-%       Then the pubic symphisis (PS) is the origin of the CS.
+%   pelvis: A mesh of the hip bones (and optionally the sacrum) with the 
+%       fields: pelvis.vertices, pelvis.faces
+%       ATTENTION: The mesh has to be transformed into the APP coordiante 
+%       system (CS). Then the pubic symphisis (PS) is the origin of the CS.
+%       See: pelvicLandmarkID_Subburaj_example.m
 % OPTIONAL INPUT:
 %   'visualization': true (default) or false
 %
@@ -16,10 +16,10 @@ function Landmarks = pelvicLandmarkIdSubburaj(pelvis, varargin)
 %   Area: area of the surface regions.
 %   ID: ids of the corresponding centroid vertices.
 %   Name: The short name of the landmark.
-% The first row is the right side, the second row is the left side.
+%   The first row is the right side, the second row is the left side.
 %
-% Depending on the spatial relationship matrix following landmarks can be
-% identified:
+%   Depending on the spatial relationship matrix following landmarks can be
+%   identified:
 %       ASIS = Anterior Superior Iliac Spine
 %       AIIS = Anterior Inferior Iliac Spine
 %       PSIS = Posterior Superior Iliac Spine
@@ -32,15 +32,16 @@ function Landmarks = pelvicLandmarkIdSubburaj(pelvis, varargin)
 %
 % REFERENCES:
 %   2008 - Subburaj et al. - 3D Shape Reasoning for Identifying Anatomical Landmarks
-%   2009 - Subburaj et al. - Automated identification of anatomical landmarks on 3D bone models reconstructed from CT scan images
+%   2009 - Subburaj et al. - Automated identification of anatomical landmarks 
+%       on 3D bone models reconstructed from CT scan images
 %
-%   TO-DO / IDEAS:
+% TODO:
 %   Clean up & standardize code
 %
-% AUTHOR: Felix Krooss
-% 	RWTH Aachen University
-% VERSION: 1.0
-% DATE: 2017-06-14
+% AUTHOR: Felix Krooﬂ
+% COPYRIGHT (C) 2016 - 2019 Felix Krooﬂ
+% LICENSE: EUPL v1.2
+%
 
 addpath(genpath([fileparts([mfilename('fullpath'), '.m']) '\' 'src']))
 addpath(genpath([fileparts([mfilename('fullpath'), '.m']) '\' 'rsc']))
