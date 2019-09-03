@@ -31,14 +31,17 @@ function Landmarks = pelvicLandmarkID_Subburaj(pelvis, varargin)
 %       IT   = Iliac Tubercle
 %
 % REFERENCES:
-%   2008 - Subburaj et al. - 3D Shape Reasoning for Identifying Anatomical Landmarks
-%   2009 - Subburaj et al. - Automated identification of anatomical landmarks 
-%       on 3D bone models reconstructed from CT scan images
+%   2008 - Subburaj et al. - 3D Shape Reasoning for Identifying Anatomical 
+%       Landmarks
+%   2009 - Subburaj et al. - Automated identification of anatomical  
+%       landmarks on 3D bone models reconstructed from CT scan images
 %
 % TODO:
 %   Clean up & standardize code
 %
 % AUTHOR: Felix Krooﬂ
+% 	mediTEC - Chair of Medical Engineering, RWTH Aachen University
+% VERSION: 1.0.0
 % COPYRIGHT (C) 2016 - 2019 Felix Krooﬂ
 % LICENSE: EUPL v1.2
 %
