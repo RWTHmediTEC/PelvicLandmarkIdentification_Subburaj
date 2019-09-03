@@ -1,0 +1,3 @@
+[submodule "src/external/PelvicLandmarkIdentification"]
+	path = src/external/PelvicLandmarkIdentification
+	url = https://github.com/RWTHmediTEC/PelvicLandmarkIdentification
